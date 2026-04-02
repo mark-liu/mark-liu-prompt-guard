@@ -34,7 +34,7 @@ class TestAnalyze:
         })
         assert response.status_code == 200
         data = response.json()
-        assert data["blocked"] is False
+        assert data["blocked"] is True
         assert len(data["matches"]) > 0
 
     def test_analyze_detects_jailbreak(self):

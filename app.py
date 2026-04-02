@@ -33,16 +33,16 @@ app = FastAPI(
     version=VERSION
 )
 
-# Default config (fail-open)
+# Default config (fail-closed — block HIGH and above)
 DEFAULT_CONFIG = {
     "sensitivity": "medium",
     "actions": {
         "LOW": "log",
-        "MEDIUM": "log",
-        "HIGH": "log",
-        "CRITICAL": "log"
+        "MEDIUM": "warn",
+        "HIGH": "block",
+        "CRITICAL": "block_notify"
     },
-    "logging": {"enabled": False}
+    "logging": {"enabled": True}
 }
 
 
@@ -119,7 +119,7 @@ def scan(request: ScanRequest):
             # Default to analyze
             result = guard.analyze(request.content)
             # DetectionResult: has action, severity, reasons
-            blocked = result.action.name.lower() == "block"
+            blocked = result.action.name.lower().startswith("block")
             return ScanResponse(
                 action=result.action.name.lower(),
                 blocked=blocked,
